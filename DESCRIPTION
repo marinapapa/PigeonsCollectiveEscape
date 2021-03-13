@@ -16,4 +16,4 @@ Imports:
     MASS,
     ggsignif
 Suggests:
-    extrafont,
+    extrafont
