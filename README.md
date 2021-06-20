@@ -1,8 +1,8 @@
 # Collective Escape of Pigeons
 
-This repository contains code and data used in the project on patterns of collective escape in flocks of pigeons, currently submitted to _Proceeding of the Royal Society B_:
+This repository contains code and data used in the project on patterns of collective escape in flocks of pigeons:
 
-*Papadopoulou M, Hildenbrandt H, Sankey DWE, Portugal SJ, and Hemelrijk CK. "Collective escape of pigeons: splits and collective turns emerge from a single escape maneuver". Manuscript submitted for publication.*
+*Papadopoulou M, Hildenbrandt H, Sankey DWE, Portugal SJ, and Hemelrijk CK. "Collective escape of pigeons: splits and collective turns emerge from a single escape maneuver". Submitted.*
 
 The code provided is open source, but we ask you to cite the above paper if you make use of it. 
 
