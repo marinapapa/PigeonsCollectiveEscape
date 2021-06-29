@@ -1,19 +1,23 @@
 Project: CollectiveEscapePatterns-Pigeons
 Title: Analysis of empirical and simulated data of flocks of pigeons
-Version: 0.1.0
+Version: 0.2.0
 Author: person("Marina", "Papadopoulou", email = "marina.vp@outlook.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6478-8365")),
 Maintainer: Marina Papadopoulou <marina.vp@outlook.com>
-Description:  Analysis and data for project on: "Collective escape of pigeons: splits and collective turns emerge from a single escape maneuver"
+Description:  Analysis and data for the manuscript: "How splits and collective turns emerge from a single escape maneuver in bird flocks under predation"
 Depends: R (>= 3.6.0)
 Encoding: UTF-8
 Imports:
     data.table,
     plyr,
+    dplyr,
     wesanderson,
     ggplot2,
     cowplot,
     pracma,
     MASS,
-    ggsignif
+    ggsignif,
+    lme4,
+    DHARMa,
+    performance
 Suggests:
     extrafont
