@@ -2,7 +2,7 @@
 
 This repository contains code and data used in the project on patterns of collective escape in flocks of pigeons:
 
-*Papadopoulou M, Hildenbrandt H, Sankey DWE, Portugal SJ, and Hemelrijk CK. "How splits and collective turns emerge from a single escape maneuver in bird flocks under predation". Submitted.*
+*Papadopoulou M, Hildenbrandt H, Sankey DWE, Portugal SJ, and Hemelrijk CK. "Emergence of splits and collective turns from a single escape maneuver in pigeon flocks under predation". Submitted.*
 
 The code provided is open source, but we ask you to cite the above paper if you make use of it. 
 
