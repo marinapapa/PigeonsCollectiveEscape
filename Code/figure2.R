@@ -1,4 +1,4 @@
-## Figure 1. Tracks of real and simulated flock, along with distribution of individual turning in empirical data
+## Figure 2. Tracks of real and simulated flock, along with distribution of individual turning in empirical data
 
 # #Uncomment to use font as in paper
 # extrafont::font_import()
@@ -419,10 +419,10 @@ comb_tracks <- cowplot::plot_grid(lpl, hists, fl_tracks,
                                   label_size = 16,
                                   rel_widths = c(0.4, 0.25, 0.4))
 
-comb_tracks
+# comb_tracks
 
 # # Uncomment to save plot
-# plot_path <- '../Results/Figure1.png' # change path
+# plot_path <- '../Results/Figure2.png' # change path
 # ggplot2::ggsave(
 #   plot = comb_tracks,
 #   filename = plot_path,

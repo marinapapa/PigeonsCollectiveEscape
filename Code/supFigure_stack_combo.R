@@ -6,14 +6,23 @@ sim_data <- read.csv("../Data/simulated/escape_outcomes.csv" )
 ###############################
 ## Prepare data
 
+## Stanadardize centrality
+sim_data$centr_fs <- sim_data$centr
+big_mean <- mean(sim_data[sim_data$fl_size == 'b', 'centr'])
+small_mean <- mean(sim_data[sim_data$fl_size == 's', 'centr'])
+
+sim_data[sim_data$fl_size == 's', 'centr_fs'] <- sim_data[sim_data$fl_size == 's','centr']/small_mean
+sim_data[sim_data$fl_size == 'b', 'centr_fs'] <-  sim_data[sim_data$fl_size == 'b','centr']/big_mean
+
+## Categorize
 angvel_groups <- c('low', 'high');
 dg_breaks <- c(0, median(abs(sim_data$ang_vel)), max(abs(sim_data$ang_vel)));
 sim_data$group_angvel <- cut(abs(sim_data$ang_vel), breaks = dg_breaks, labels = angvel_groups) 
 
 groups <- c('center', 'edge');
-dg_breaks <- c(0, median(sim_data$centr, na.rm = TRUE), max(sim_data$centr, na.rm = TRUE));
+dg_breaks <- c(0, median(sim_data$centr_fs, na.rm = TRUE), max(sim_data$centr_fs, na.rm = TRUE));
 
-sim_data$group_cent <- cut(sim_data$centr, breaks = dg_breaks, labels = groups) ;
+sim_data$group_cent <- cut(sim_data$centr_fs, breaks = dg_breaks, labels = groups) ;
 
 toplot <- plyr::count(sim_data, c('outcome', 'group_cent', 'group_angvel', 'conflict'));
 totcount <- plyr::count(sim_data, c('group_cent', 'group_angvel', 'conflict'));

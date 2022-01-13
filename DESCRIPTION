@@ -1,6 +1,6 @@
 Project: CollectiveEscapePatterns-Pigeons
 Title: Analysis of empirical and simulated data of flocks of pigeons
-Version: 0.2.0
+Version: 0.3.0
 Author: person("Marina", "Papadopoulou", email = "marina.vp@outlook.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6478-8365")),
 Maintainer: Marina Papadopoulou <marina.vp@outlook.com>
 Description:  Analysis and data for the manuscript: "How splits and collective turns emerge from a single escape maneuver in bird flocks under predation"

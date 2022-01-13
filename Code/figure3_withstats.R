@@ -1,155 +1,141 @@
-## Figure 3. Boxplots comparing angular velocity and centrality distributions 
-###  of splits and collective turns in empirical data
-## Statistics: GLMMs for the effect of angular velocity and 
-###  centrality on turning type (split or collective turn)
+## Figure 3. Horizontal stackplot: effect of maneuver characteristics on relative frequency of collective turns and splits
 
-emp_data <- read.csv("../Data/empirical/ind_turns_outcome.csv" )
+sim_df<- read.csv('../Data/simulated/escape_outcomes.csv')
 
 ##############################################################################
-## Boxplots
+# Stats:
+##############################################################################
+# Angular velocity
+spl_angv <- sim_df[sim_df$outcome == 'split', 'ang_vel']
+turn_angv <- sim_df[sim_df$outcome == 'turn', 'ang_vel']
+ks.test(spl_angv, turn_angv)
+
+
+# Standardised Centrality
+sim_df$centr_fs <- sim_df$centr
+big_mean <- mean(sim_df[sim_df$fl_size == 'b', 'centr'])
+small_mean <- mean(sim_df[sim_df$fl_size == 's', 'centr'])
+
+sim_df[sim_df$fl_size == 's', 'centr_fs'] <- sim_df[sim_df$fl_size == 's','centr']/small_mean
+sim_df[sim_df$fl_size == 'b', 'centr_fs'] <-  sim_df[sim_df$fl_size == 'b','centr']/big_mean
+spl_centr_fs <- sim_df[sim_df$outcome == 'split', 'centr_fs']
+turn_centr_fs <- sim_df[sim_df$outcome == 'turn', 'centr_fs']
+ks.test(spl_centr_fs, turn_centr_fs)
+
+# Escape direction
+chisq.test(y = sim_df$outcome, x = sim_df$conflict)
+
+
+##############################################################################
+## Plot:
 ##############################################################################
 
-# #Uncomment to use font as in paper
+turns_sum <- read.csv('../Data/simulated/turn_chars_summary.csv')
+
+## 1. Plots stats (as categorical)
+## Angular velocity
+angvel_groups <- c('low', 'high');
+dg_breaks <- c(0, median(abs(sim_df$ang_vel)), max(abs(sim_df$ang_vel)));
+sim_df$group_angv <- cut(abs(sim_df$ang_vel), breaks = dg_breaks, labels = angvel_groups)
+
+print('Angular velocity low vs high:')
+chisq.test(y = sim_df$outcome, x = sim_df$group_angv)
+
+## Centrality
+groups <- c('center', 'edge');
+dg_breaks <- c(0, median(sim_df$centr_fs, na.rm = TRUE), max(sim_df$centr_fs, na.rm = TRUE));
+sim_df$group_centr <- cut(sim_df$centr_fs, breaks = dg_breaks, labels = groups) ;
+print('Position in the flock center vs edge:')
+chisq.test(y = sim_df$outcome, x = sim_df$group_centr)
+
+## Escape direction
+print('Escape direction inwards vs outwards:')
+chisq.test(y = sim_df$outcome, x = sim_df$conflict)
+
+
+## 2. Horizontal stackplot
+
+# # Uncomment to use font as in plots
 # extrafont::font_import()
 # extrafont::loadfonts(device = "win")
 
-angv <- subset(emp_data, 
-               ang_vel < quantile(emp_data$ang_vel, 0.95) # exclude top 5% for better visual
-               )
+sing_lab <- data.frame(var = c('ang_vel', 'centrality_flsize', 'esc_dir'),
+                       l = c("***", "***", "ns"), # significance from chisq tests above
+                       stringsAsFactors = F)
 
-angvel <- ggplot2::ggplot(angv, ggplot2::aes(x = factor(init,
-                                                        levels = c('turn','split'),
-                                                        ordered = TRUE), 
-                                             y = pracma::rad2deg(ang_vel),
-                                             fill = init))+ 
-  
-  ggplot2::geom_boxplot(size = 1, 
-                        alpha = 0.1,
-                        width = 0.8) +
+var.labs <-  c("ang_vel" = "Angular \nvelocity",
+               "centrality_flsize" = "Centrality",
+               "esc_dir" = "Escape \ndirection")
+
+turns_sum <- turns_sum[turns_sum$var != 'centrality',] # remove unstandardized centrality
+
+stack_plot <- ggplot2::ggplot(data = turns_sum, 
+                              ggplot2::aes(x = group, y = perc, linetype = outcome, fill = outcome)) +
+  ggplot2::geom_bar(color = 'black',
+                    alpha = 0.2, 
+                    stat = "identity",
+                    size = 1.5, 
+                    width = 0.9) +
   ggplot2::theme_bw() +
-  #ggsignif::geom_signif(comparisons = list(c("split", "turn")), map_signif_level=TRUE) +
-  ggplot2::scale_fill_manual(breaks = c('split', 'turn'),
-                             labels = c('Split', 'Collective turn'),
-                             values = c('darkred', 'dodgerblue3')) +
+  ggplot2::geom_label(ggplot2::aes(label = paste0(round(perc, 0), '%')),
+                      fill = 'white', 
+                      size = 5, 
+                      show.legend = FALSE,  
+                      family = 'Palatino Linotype',
+                      position = ggplot2::position_stack(vjust = 0.5)) +
   ggplot2::labs(x = '',
-                y = 'Angular velocity (deg/s)\n', 
-                title = 'Angular velocity') +
-  ggplot2::theme(legend.position = 'none',
-                 text = ggplot2::element_text(family = 'Palatino Linotype'),
-                 axis.text = ggplot2::element_text(size = 16, face = "bold", color = 'black'),
-                 axis.title = ggplot2::element_text(size = 18, face = "bold"),
-                 plot.title = ggplot2::element_text(size = 18, hjust = 0.5, face = "bold")) +
-  ggplot2::scale_x_discrete(labels = c("split" = "Splitting \nturn", 
-                                       "turn" = "Collective \nturn")) 
-
-#angvel
-
-dcent <- subset(emp_data, 
-                dist2cent < quantile(emp_data$dist2cent, 0.9)
-                )
-
-centr <- ggplot2::ggplot(dcent, 
-                         ggplot2::aes(x = factor(init,
-                                                 levels = c('turn','split'),
-                                                 ordered = TRUE),
-                                      y = dist2cent,
-                                      fill = init)) + 
-  ggplot2::geom_boxplot(size = 1,
-                        alpha = 0.1,
-                        width = 0.8) +
-  ggplot2::theme_bw() +
-  #ggsignif::geom_signif(comparisons = list(c("split", "turn")), map_signif_level=TRUE) +
+                y = '',
+                linetype = 'Collective pattern:',
+                fill = 'Collective pattern:',
+                title = "") +
+  ggplot2::geom_text(data = sing_lab,
+                     ggplot2::aes(label = l), 
+                     family = 'Palatino Linotype', 
+                     x = 1.5,
+                     y = -2.8, 
+                     inherit.aes = FALSE,
+                     size = 5) +
+  ggplot2::scale_x_discrete(labels = c("in" = "Inwards", "out" = "Outwards",
+                                       "edge" = "Edge", "center" = "Center",
+                                       "high" = "High", "low"= "Low"),
+                            position = 'bottom')+
+  ggplot2::coord_flip() +
+  ggplot2::facet_grid(var ~ . ,
+                      scales = "free",
+                      labeller = ggplot2::labeller(var = var.labs), 
+                      switch = 'y') +
+  ggplot2::theme(
+    text = ggplot2::element_text(family = 'Palatino Linotype'),
+    legend.title = ggplot2::element_text(size = 14),
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 16),
+    axis.text = ggplot2::element_text(size = 14),
+    axis.title = ggplot2::element_blank(),
+    axis.text.x =  ggplot2::element_blank(),
+    plot.title = ggplot2::element_text(size = 14, face = "bold"),
+    plot.subtitle  = ggplot2::element_text(size = 14, face = "italic"),
+    strip.text.y = ggplot2::element_text(size = 14, face = "bold"),
+    strip.placement = "outside",
+    strip.background = ggplot2::element_rect(fill = 'white'),
+    plot.tag.position = c(.1, .82),
+    plot.tag = ggplot2::element_text(size = 14, face = "bold"),
+    panel.grid.major = ggplot2::element_blank(), 
+    panel.grid.minor = ggplot2::element_blank())+
+  ggplot2::scale_linetype_discrete(breaks = c('turn', 'split'),
+                                   labels = c('Collective turn', 'Split'))+
   ggplot2::scale_fill_manual(breaks = c('turn', 'split'),
                              labels = c('Collective turn', 'Split'),
-                             values = c('dodgerblue3', 'darkred')) +
-  ggplot2::labs(x = '', 
-                y = 'Distance to flock\'s center (m)\n', 
-                title = 'Centrality') +
-  ggplot2::theme(legend.position = 'none',
-                 text = ggplot2::element_text(family = 'Palatino Linotype'),
-                 axis.text = ggplot2::element_text(size = 16, face = "bold", color = 'black'),
-                 axis.title = ggplot2::element_text(size = 18, face = "bold"),
-                 plot.title = ggplot2::element_text(size = 18, hjust = 0.5, face = "bold")) +
-  ggplot2::scale_x_discrete(labels = c("turn" = "Collective \nturn", 
-                                       "split" = "Splitting \nturn")) 
+                             values = c('dodgerblue3', 'darkred'))
 
-#centr
+# stack_plot
 
-ang_vels <- cowplot::plot_grid(angvel, centr, 
-                               nrow = 1,
-                               ncol = 2, 
-                               labels = c("A", "B"), 
-                               label_size = 20)
-
-#ang_vels
-
+#######################################
 # # Uncomment to save plot
-# plot_path <- 'Figure3.png' # change path
+# plot_path <- '../Results/Figure3.png' # change path
 # ggplot2::ggsave(
-#   plot = ang_vels,
+#   plot = stack_plot,
 #   filename = plot_path,
-#   width = 8.9,
-#   height = 9,
-#   dpi = 600
+#   width = 11,
+#   height = 5,
+#   dpi = 500
 # )
-
-
-##############################################################################
-## Stats - GLMMs
-##############################################################################
-
-## 1. Main model
-mod_main <- lme4::glmer(init ~  ang_vel 
-                        + dist2cent 
-                        + (1|study.flight) 
-                        + (1|pigeon) 
-                        , data = emp_data, 
-                        family = binomial)
-
-summary(mod_main)
-simout_main <- DHARMa::simulateResiduals(fittedModel = mod_main, plot = T)
-DHARMa::testDispersion(simout_main, type = 'PearsonChisq', alternative = 'greater', plot = F) 
-DHARMa::testZeroInflation(simout_main)
-DHARMa::plotResiduals(simout_main, form = emp_data$ang_vel)
-
-# Check for multicollinearity
-performance::check_collinearity(mod_main)
-
-## 2. Excluding outliers of centrality
-data_out <- subset(emp_data, 
-                   dist2cent < quantile(emp_data$dist2cent, 0.9)
-)
-
-mod_out <- lme4::glmer(init ~ ang_vel 
-                       + dist2cent 
-                       + (1|study.flight) 
-                       + (1|pigeon) 
-                       , data = data_out, 
-                       family = binomial)
-
-summary(mod_out)
-simout_noout <- DHARMa::simulateResiduals(fittedModel = mod_out, plot = T)
-DHARMa::testDispersion(simout_noout, type = 'PearsonChisq', alternative = 'greater', plot = F) 
-DHARMa::plotResiduals(simout_noout, form = data_out$ang_vel)
-DHARMa::plotResiduals(simout_noout, form = data_out$dist2cent)
-
-## 3. Close to predator
-
-data_close <- subset(data_out, 
-                     dist2pred < 100
-)
-
-mod_close <- lme4::glmer(init ~  ang_vel 
-                         + dist2cent # * small.big
-                         + (1|study.flight) 
-                         + (1|pigeon) 
-                         , data = data_close,
-                         family = binomial)
-
-summary(mod_close)
-simout_noout_close <- DHARMa::simulateResiduals(fittedModel = mod_close, plot = T)
-DHARMa::testDispersion(simout_noout_close, type = 'PearsonChisq', alternative = 'greater', plot = F) 
-DHARMa::plotResiduals(simout_noout_close, form = data_close$ang_vel)
-DHARMa::plotResiduals(simout_noout_close, form = data_close$dist2cent)
-
-

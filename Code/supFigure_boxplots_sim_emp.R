@@ -11,6 +11,24 @@
 emp_data <- read.csv("../Data/empirical/ind_turns_outcome.csv" )
 sim_data <- read.csv('../Data/simulated/escape_outcomes.csv')
 
+# Standanrdize centrality
+# Empirical data
+emp_data$centr <- emp_data$dist2cent
+emp_data$centr <- emp_data$dist2cent
+big_mean <- mean(emp_data[emp_data$small.big == 'b', 'dist2cent'])
+small_mean <- mean(emp_data[emp_data$small.big == 's', 'dist2cent'])
+
+emp_data[emp_data$small.big == 'b', 'centr'] <- emp_data[emp_data$small.big == 'b', 'dist2cent']/big_mean
+emp_data[emp_data$small.big == 's', 'centr'] <- emp_data[emp_data$small.big == 's', 'dist2cent']/small_mean
+
+# Simulated data
+sim_data$centr_fs <- sim_data$centr
+big_mean <- mean(sim_data[sim_data$fl_size == 'b', 'centr'])
+small_mean <- mean(sim_data[sim_data$fl_size == 's', 'centr'])
+
+sim_data[sim_data$fl_size == 's', 'centr_fs'] <- sim_data[sim_data$fl_size == 's','centr']/small_mean
+sim_data[sim_data$fl_size == 'b', 'centr_fs'] <-  sim_data[sim_data$fl_size == 'b','centr']/big_mean
+
 ###############################################################
 ## Empirical data
 
@@ -53,7 +71,7 @@ centr <- ggplot2::ggplot(dcent,
                          ggplot2::aes(x = factor(init,
                                                  levels = c('turn','split'),
                                                  ordered = TRUE),
-                                      y = dist2cent,
+                                      y = centr,
                                       fill = init)) + 
   ggplot2::geom_boxplot(size = 1,
                         alpha = 0.1,
@@ -64,7 +82,7 @@ centr <- ggplot2::ggplot(dcent,
                              labels = c('Collective turn', 'Split'),
                              values = c('dodgerblue3', 'darkred')) +
   ggplot2::labs(x = '', 
-                y = 'Centrality (m)\n', 
+                y = 'Centrality \n', 
                 title = '') +
   ggplot2::theme(legend.position = 'none',
                  text = ggplot2::element_text(family = 'Palatino Linotype'),
@@ -80,14 +98,14 @@ centr <- ggplot2::ggplot(dcent,
 
 
 centr_sim <- subset(sim_data, 
-                    centr < quantile(sim_data$centr, 0.9))
+                    centr_fs < quantile(sim_data$centr_fs, 0.9))
 
 sim_centr <- ggplot2::ggplot(centr_sim, 
                 ggplot2::aes(x = factor(outcome,
                                         levels = c('turn','split'),
                                         ordered = TRUE),
                              
-                             y = centr, fill = outcome )) +
+                             y = centr_fs, fill = outcome )) +
   ggplot2::geom_boxplot(size = 1, alpha = 0.1, width = 0.8) +
   ggplot2::labs(x = '', y = 'Centrality', title = '', fill = NA) +
   ggplot2::scale_x_discrete(labels= c("split" = "Split", "turn" = "Collective \nturn"))+
@@ -135,4 +153,4 @@ all_boxes <- cowplot::plot_grid(angvel,  sim_angvel, centr, sim_centr,
                                ncol = 2, 
                                labels = c("A", "B"), 
                                label_size = 18)
-all_boxes
+# all_boxes
