@@ -30,7 +30,7 @@ The data comprise analysed GPS tragectories of flocks of homing pigeons. Files:
 - _col_turns_pred.csv_: results of our analysis on collective turns of flocks under predation, used in Table 1.
 - _col_turns_control.csv_: results of our analysis on collective turns of flocks in control flights, used in Table 1.
 
-**Simulated data** are extracted by the extended version of the computational model [*HoPE*](https://github.com/marinapapa/HoPE-model) (Homing Pigeons Escape), an agent-based model adjusted to the collective escape of homing pigeons, developed by Marina Papadopoulou and Dr. Hanno Hildenbrandt for a project on [self-organized collective escape of pigeons](https://github.com/marinapapa/SelfOrg-ColEsc-Pigeons) and extended for this project. Files:
+**Simulated data** are output of the computational model [*a new hope HoPE*](https://github.com/marinapapa/a-new-HoPE-model), an extended version of [*HoPE*](https://github.com/marinapapa/HoPE-model) (Homing Pigeons Escape), an agent-based model adjusted to the collective escape of homing pigeons, developed by Marina Papadopoulou and Dr. Hanno Hildenbrandt for a project on [self-organized collective escape of pigeons](https://github.com/marinapapa/SelfOrg-ColEsc-Pigeons) and extended for this project. Files:
 
 - _flock9_track_i1815.csv_: part of a track of one flock during a simulation run, used in Figure 2.
 - _flock9_pigeon3_i1815.csv_: part of the track of one pigeon-agent while being split from the flock, used in Figure 2.
