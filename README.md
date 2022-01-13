@@ -9,9 +9,9 @@ The code provided is open source, but we ask you to cite the above paper if you 
 ## Code
 All analysis is performed in _R_, version 3.6. See DESCRIPTION for details on depedencies. 
 
-- figure2.R: reproduces Figure 1.
-- figure3_withstats.R: reproduces Figure 2 with the statistical analysis related to it.
-- figure4_withstats.R: reproduces Figure 3 with the statistical analysis related to it.
+- figure2.R: reproduces Figure 2.
+- figure3_withstats.R: reproduces Figure 3 with the statistical analysis related to it.
+- figure4_withstats.R: reproduces Figure 4 with the statistical analysis related to it.
 - table1.R: statistical analysis presented in Table 1. 
 - supFigure_*: files to reproduce supplementary figures
 
